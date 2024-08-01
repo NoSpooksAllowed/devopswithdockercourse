@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  client:
+    build: ./example-frontend/.
+    ports:
+      - "5000:5000"
+    depends_on:
+      - server
+
+  server:
+    build: ./example-backend/.
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+    environment:
+      REDIS_HOST: "exercise2_4-redis-1"
+
+  redis:
+    image: redis:7.2
