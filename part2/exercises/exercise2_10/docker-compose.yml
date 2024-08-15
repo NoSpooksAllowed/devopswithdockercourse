@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  client:
+    build: ./example-frontend/.
+    depends_on:
+      - server
+
+  server:
+    build: ./example-backend/.
+    depends_on:
+      - redis
+      - db
+    environment:
+      REDIS_HOST: "exercise2_10-redis-1"
+      POSTGRES_HOST: "exercise2_10-db-1"
+
+  redis:
+    image: redis:7.2
+
+  db:
+    image: postgres:13.2-alpine
+    environment:
+      POSTGRES_PASSWORD: "postgres"
+    restart: unless-stopped
+    volumes:
+      - db-data:/var/lib/postgresql/data
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    depends_on:
+      - server 
+      - client
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+
+volumes:
+  db-data:
